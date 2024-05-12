@@ -17,7 +17,6 @@ export type TestFormState = {
 }
 
 export const createTestAction = async (state: TestFormState, formData: FormData):Promise<TestFormState> => {
-  console.log('createTestAction formData', formData)
   const testId = formData.get('id')
   let fields = {
     title: formData.get('title'),
@@ -95,7 +94,7 @@ export const addQuestion = async (state: QuestionFormState, formData: FormData) 
   }
 
   const newQuestion = await createQuestion(testId, text)
-  const newAnswers = await createAnswers(newQuestion, answers)
+  await createAnswers(newQuestion, answers)
 
 
   revalidatePath('/dashboard/test/[id]')

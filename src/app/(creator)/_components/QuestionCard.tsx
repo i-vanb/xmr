@@ -23,7 +23,7 @@ type QuestionCardProps = {
 }
 export const QuestionCard = ({close, test_id}: QuestionCardProps) => {
   const [state, formAction] = useFormState(addQuestion, {
-    message: ""
+    message: "",
   })
   const [qType, setQType] = useState("1")
 

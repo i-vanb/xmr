@@ -1,6 +1,5 @@
-import { PrismaClient } from '@prisma/client'
+import db from "@/lib/db";
 
-const prisma = new PrismaClient()
 
 type CreateTestProps = {
   title: string;
@@ -8,14 +7,13 @@ type CreateTestProps = {
   userId: string;
 }
 export const createTest = async ({title, description, userId}:CreateTestProps) => {
-  const test = await prisma.test.create({
+  const test = await db.test.create({
     data: {
       title,
       description,
       userId
     },
   })
-  console.log('Create test', test)
   return test.id
 }
 
@@ -25,7 +23,7 @@ type EditTestProps = {
   description: string;
 }
 export const editTest = async ({id, title, description}:EditTestProps) => {
-  const test = await prisma.test.update({
+  const test = await db.test.update({
     where: {
       id
     },
@@ -38,7 +36,7 @@ export const editTest = async ({id, title, description}:EditTestProps) => {
 }
 
 export const getTestById = async (id:string) => {
-  const test = await prisma.test.findUnique({
+  const test = await db.test.findUnique({
     where: {
       id
     },
@@ -55,7 +53,7 @@ export const getTestById = async (id:string) => {
 }
 
 export const createQuestion = async (testId:string, text:string) => {
-  const question = await prisma.question.create({
+  const question = await db.question.create({
     data: {
       text,
       testId
@@ -72,14 +70,14 @@ export const createAnswers = async (questionId:string, answers:Array<{text:strin
       questionId
     }
   })
-  const newAnswers = await prisma.answer.createMany({
+  const newAnswers = await db.answer.createMany({
     data: answerRecords
   })
   return newAnswers
 }
 
 export const getTestList = async (userId:string) => {
-  const tests = await prisma.test.findMany({
+  const tests = await db.test.findMany({
     where: {
       userId
     }
@@ -89,7 +87,7 @@ export const getTestList = async (userId:string) => {
 
 // get Test list for user with questions and answers counts
 export const getTestListWithCounts = async (userId:string) => {
-  const tests = await prisma.test.findMany({
+  const tests = await db.test.findMany({
     where: {
       userId
     },
@@ -114,23 +112,13 @@ export const getTestListWithCounts = async (userId:string) => {
 
 export const removeTest = async ({id, userId}:{id:string, userId:string}) => {
   try {
-    const test = await prisma.test.delete({
+    const test = await db.test.delete({
       where: {
         id, userId
       }
     })
-    console.log('Remove test', test)
     return test.id
   } catch (error) {
     return null
   }
 }
-
-// export const getExercisesByTestId = async (testId:string) => {
-//   const exercises = await prisma.exercise.findMany({
-//     where: {
-//       testId
-//     }
-//   })
-//   return exercises
-// }

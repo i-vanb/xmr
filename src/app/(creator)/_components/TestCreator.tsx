@@ -24,7 +24,6 @@ export const TestEditor = ({name, description, id}:Props) => {
   const linkBack = id ? `/dashboard/test/${id}` : "/dashboard"
 
   useEffect(()=> {
-    console.log('STATE here', {state})
     if(state.success == true) {
       toast.success(state.message)
       // router.push(state.id ? `/dashboard/test/${state.id}` : "/dashboard")
