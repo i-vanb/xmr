@@ -1,9 +1,10 @@
 import {getTestList, getTestListWithCounts} from "@/lib/db/test";
 import Link from "next/link";
+import getSelection from "@/lib/getSession";
 import {auth} from "@/auth";
 
 export default async function Dashboard() {
-  const user = await auth()
+  const user = await getSelection()
   console.log('AUTH', user)
   const userId = "clw0mlqh10000xkmntihx7qfw"
   const testList = await getTestListWithCounts(userId)

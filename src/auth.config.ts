@@ -3,6 +3,8 @@ import Google from "next-auth/providers/google";
 
 import type { NextAuthConfig } from "next-auth";
 import bcryptjs from "bcryptjs";
+import {SignInSchema} from "@/lib/db/sign";
+import {getUserByEmail} from "@/lib/db/user";
 
 export default {
   providers: [
@@ -18,29 +20,25 @@ export default {
       },
       // @ts-ignore
       authorize: async (credentials) => {
-        console.log('authorize CREDENTIALS',credentials)
-        // const validatedFields = SignInSchema.safeParse(credentials);
-        //
-        // if (validatedFields.success) {
-        //   const { email, password} = validatedFields.data;
-        //   let [user] = await getUserByEmail(email);
-        //
-        //
-        //   if(!user || !user.password) return null;
-        //
-        //   const match = await bcryptjs.compare(password, user.password);
-        //   if(match) return user;
-        // }
+        const validatedFields = SignInSchema.safeParse(credentials);
 
-        return {
-          email: 'email@email.com',
-          id: 'scsdcerferverfg3rvbgre3dvvdfdvdf',
-        };
+        if (validatedFields.success) {
+          const { email, password} = validatedFields.data;
+          let user = await getUserByEmail(email);
+
+
+          if(!user || !user.password) return null;
+
+          const match = await bcryptjs.compare(password, user.password);
+          if(match) return user;
+        }
+
+        return null;
       },
     })
   ],
   secret: process.env.AUTH_SECRET,
-  // pages: {
-  //   signIn: '/auth/signin'
-  // }
+  pages: {
+    signIn: '/login'
+  }
 } satisfies NextAuthConfig;

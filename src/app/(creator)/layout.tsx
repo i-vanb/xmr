@@ -3,14 +3,20 @@ import {Container} from "@/components/layout/Container";
 import {Navigation} from "@/components/navigation";
 import {Logo} from "@/components/logo";
 import {Toaster} from "@/components/ui/sonner";
-import {SignButton} from "@/app/_components/sign,button";
+import {SignButton} from "@/app/_components/sign.button";
 import {auth} from "@/auth";
+import {ProfileImage} from "@/app/_components/profile.image";
+import {redirect} from "next/navigation";
+import getSelection from "@/lib/getSession";
 
 export default async function DashboardLayout({children}: {
   children: ReactNode
 }) {
-  const session = await auth()
-  if (!session) return <div>Not authenticated</div>
+  const session = await getSelection()
+  console.log("session", session)
+  const user = session?.user
+  // if (!user) return <div>Not authenticated</div>
+  if(!user) redirect("/api/auth/signin?callbackUrl=/dashboard")
 
   return (
     <>
@@ -20,7 +26,10 @@ export default async function DashboardLayout({children}: {
             <Logo path={"/dashboard"}/>
             <Navigation/>
             <div>
-              <SignButton />
+              <ProfileImage
+                image={session?.user?.image || null}
+                name={session?.user?.name || undefined}
+              />
             </div>
           </div>
         </Container>

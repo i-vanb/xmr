@@ -22,6 +22,7 @@ type QuestionCardProps = {
   test_id: string
 }
 export const QuestionCard = ({close, test_id}: QuestionCardProps) => {
+  // @ts-ignore
   const [state, formAction] = useFormState(addQuestion, {
     message: "",
   })
