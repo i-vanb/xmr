@@ -22,6 +22,7 @@ export default async function Dashboard() {
           </Link>
         )
       })}
+      {!testList.length && <p>No tests found</p>}
     </section>
   );
 }
