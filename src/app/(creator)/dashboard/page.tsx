@@ -1,13 +1,13 @@
-import {getTestList, getTestListWithCounts} from "@/lib/db/test";
+import {getTestListWithCounts} from "@/lib/db/test";
 import Link from "next/link";
-import getSelection from "@/lib/getSession";
-import {auth} from "@/auth";
+import getSession from "@/lib/getSession";
 
 export default async function Dashboard() {
-  const user = await getSelection()
-  console.log('AUTH', user)
-  const userId = "clw0mlqh10000xkmntihx7qfw"
-  const testList = await getTestListWithCounts(userId)
+  const session = await getSession()
+  if (!session?.user?.id) return null
+
+  const {id} = session.user
+  const testList = await getTestListWithCounts(id)
 
   return (
     <section className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
