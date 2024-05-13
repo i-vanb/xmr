@@ -18,6 +18,7 @@ import {formSchema} from "@/app/(auth)/signup/signup.schema";
 import {PasswordInput} from "@/components/ui/password-input";
 import {signUser} from "@/actions/user";
 import {toast} from "sonner";
+import Link from "next/link";
 
 export const SignUpForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -39,56 +40,62 @@ export const SignUpForm = () => {
 
   return (
     <Form {...form}>
+      <div>
+        <h1 className="text-2xl font-semibold mb-4">SignUp</h1>
+        <p className="text-sm mb-4">Already have an account? <Link className="text-blue-400"
+                                                                  href={'/login'}>LogIn</Link>
+        </p>
+      </div>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
           name="username"
-          render={({ field }) => (
+          render={({field}) => (
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
                 <Input placeholder="" {...field} />
               </FormControl>
-              <FormMessage />
+              <FormMessage/>
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
           name="email"
-          render={({ field }) => (
+          render={({field}) => (
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input placeholder="example@mail.com" {...field} />
               </FormControl>
-              <FormMessage />
+              <FormMessage/>
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
           name="password"
-          render={({ field }) => (
+          render={({field}) => (
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
                 <PasswordInput {...field} />
               </FormControl>
-              <FormMessage />
+              <FormMessage/>
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
           name="confirmPassword"
-          render={({ field }) => (
+          render={({field}) => (
             <FormItem>
               <FormLabel>Confirm Password</FormLabel>
               <FormControl>
                 <PasswordInput {...field} />
               </FormControl>
-              <FormMessage />
+              <FormMessage/>
             </FormItem>
           )}
         />

@@ -1,16 +1,12 @@
 import {Button} from "@/components/ui/button";
 import {auth, signIn, signOut} from "@/auth";
+import Link from "next/link";
 
 export const SignButton = () => {
   return (
-    <form
-      action={async () => {
-        "use server"
-        await signIn()
-      }}
-    >
-      <Button>Log in</Button>
-    </form>
+    <Link href={'/login'}>
+      <Button>Log In</Button>
+    </Link>
   )
 }
 

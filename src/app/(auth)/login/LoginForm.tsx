@@ -19,6 +19,7 @@ import {PasswordInput} from "@/components/ui/password-input";
 import {loginUser} from "@/actions/user";
 import SocialSign from "@/app/(auth)/login/SocialSign";
 import {toast} from "sonner";
+import Link from "next/link";
 
 export const LoginForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -39,36 +40,41 @@ export const LoginForm = () => {
 
   return (
     <Form {...form}>
+      <div>
+        <h1 className="text-2xl font-semibold mb-4">Login</h1>
+        <p className="text-sm mb-4">Don't have account yet? <Link className="text-blue-400" href={'/signup'}>SignUp</Link>
+        </p>
+      </div>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
           name="email"
-          render={({ field }) => (
+          render={({field}) => (
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input placeholder="example@mail.com" {...field} />
               </FormControl>
-              <FormMessage />
+              <FormMessage/>
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
           name="password"
-          render={({ field }) => (
+          render={({field}) => (
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
                 <PasswordInput {...field} />
               </FormControl>
-              <FormMessage />
+              <FormMessage/>
             </FormItem>
           )}
         />
         <div className="flex gap-4 items-center">
           <Button className="flex-1" type="submit">Submit</Button>
-          <SocialSign />
+          <SocialSign/>
         </div>
       </form>
     </Form>
