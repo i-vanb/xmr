@@ -21,11 +21,13 @@ type EditTestProps = {
   id: string;
   title: string;
   description: string;
+  userId: string;
 }
-export const editTest = async ({id, title, description}:EditTestProps) => {
+export const editTest = async ({id, title, description, userId}:EditTestProps) => {
   const test = await db.test.update({
     where: {
-      id
+      id,
+      userId
     },
     data: {
       title,

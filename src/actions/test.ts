@@ -2,11 +2,11 @@
 import { z } from "zod";
 import {createAnswers, createQuestion, createTest, editTest} from "@/lib/db/test";
 import {revalidatePath} from "next/cache";
+import getSession from "@/lib/getSession";
 
 const TestSchema = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
-  userId: z.string().min(4),
   id: z.string().optional()
 });
 
@@ -21,7 +21,6 @@ export const createTestAction = async (state: TestFormState, formData: FormData)
   let fields = {
     title: formData.get('title'),
     description: formData.get('description'),
-    userId: formData.get('userId'),
     id: formData.get('id') || undefined
   }
 
@@ -34,11 +33,18 @@ export const createTestAction = async (state: TestFormState, formData: FormData)
     }
   }
 
-  const {id, title, description, userId} = validatedFields.data
+  const {id, title, description} = validatedFields.data
+  const auth = await getSession()
+  if(!auth?.user?.id) {
+    return {
+      message: 'Unauthorized',
+      success: false
+    }
+  }
 
   const newTest = id
-    ? await editTest({id, title, description})
-    : await createTest({title, description, userId})
+    ? await editTest({id, title, description, userId: auth.user.id})
+    : await createTest({title, description, userId: auth.user.id})
 
   if(!newTest) {
     return {

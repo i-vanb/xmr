@@ -26,7 +26,6 @@ export const TestEditor = ({name, description, id}:Props) => {
   useEffect(()=> {
     if(state.success == true) {
       toast.success(state.message)
-      // router.push(state.id ? `/dashboard/test/${state.id}` : "/dashboard")
       router.replace(state.id ? `/dashboard/test/${state.id}` : "/dashboard")
     } else if(state.success == false) {
       toast.error(state.message)
@@ -38,7 +37,6 @@ export const TestEditor = ({name, description, id}:Props) => {
   return (
     <form className="max-w-[600px]" action={formAction}>
       {id && <input type="hidden" name="id" value={id}/> }
-      <input type="hidden" name="userId" value="clw0mlqh10000xkmntihx7qfw"/>
       <h1 className="mb-3 font-bold text-xl">{pageTitle}</h1>
       <div className="flex flex-col-reverse md:flex-row gap-5">
         <div className="md:flex-1">
