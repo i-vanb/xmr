@@ -1,15 +1,27 @@
 'use client';
 import {createContext, ReactNode, useContext, useEffect, useState} from "react";
-import {log} from "node:util";
+import {i18n} from "@/i18n.config";
 
 export const LangContext = createContext<LangContext | null>(null);
+const map = new Map<string, string>();
+
 
 export const AppContextProvider = ({children, lang, dict}:AppContextProviderProps) => {
-  const [state, setState] = useState<LangState>({lang, list: ['en', 'tr']});
+  const [state, setState] = useState<LangState>({lang, list: [...i18n.locales]});
   const [dictionary, setDictionary] = useState<any>(dict);
 
   useEffect(() => {
-    import(`@/dictionaries/${state.lang}.json`).then(module => setDictionary(module.default))
+    if(!map.size) {
+      map.set(state.lang, dict)
+    } else if(map.has(state.lang)) {
+      setDictionary(map.get(state.lang))
+    } else {
+      import(`@/dictionaries/${state.lang}.json`).then(module => {
+        map.set(state.lang, module.default)
+        setDictionary(module.default)
+        fetch('/api/lang?lang='+state.lang, {method: 'PATCH'})
+      })
+    }
   }, [state])
 
   const changeLanguage = (lang:string) => {
