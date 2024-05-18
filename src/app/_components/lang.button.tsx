@@ -10,10 +10,10 @@ export const LangSwitcher = () => {
     <div className="flex gap-2">
       {list.map(item => {
         const isActive = item === lang;
-        const className = isActive ? 'bg-blue-500' : 'bg-gray-200'
+        const className = isActive ? 'bg-blue-500 hover:bg-blue-500' : 'bg-gray-200 hover:bg-gray-300'
         const onClickHandler = () => changeLanguage(item);
         return (
-          <a className="cursor-pointer" key={item} onClick={onClickHandler}>
+          <a aria-disabled={isActive} className="cursor-pointer" key={item} onClick={onClickHandler}>
             <Badge className={className}>{item}</Badge>
           </a>
         )

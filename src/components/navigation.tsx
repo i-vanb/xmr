@@ -9,8 +9,11 @@ export const Navigation = () => {
   return (
     <nav>
       <ul className="flex items-center gap-4">
-        <li>
-          <Link href={"/create/test"}>{dictionary.main.create_test}</Link>
+        <li className="font-medium text-sm">
+          <Link className="hover:text-blue-400 transition-colors" href={"/create/test"}>{dictionary.main.create_test}</Link>
+        </li>
+        <li className="font-medium text-sm">
+          <Link className="hover:text-blue-400 transition-colors" href={"/create/student"}>{dictionary.main.create_student}</Link>
         </li>
       </ul>
     </nav>

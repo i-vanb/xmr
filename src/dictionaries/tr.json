@@ -1,5 +1,6 @@
 {
   "main": {
-    "create_test": "Testi oluştur"
+    "create_test": "Testi oluştur",
+    "create_student": "Öğrenci oluştur"
   }
 }

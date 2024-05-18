@@ -65,14 +65,19 @@ model Account {
 
 
 model Test {
-  id          String   @id @default(cuid())
-  title       String
-  description String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  questions   Question[]
+  id              String     @id @default(cuid())
+  title           String
+  description     String
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  userId          String
+  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questions       Question[]
+  isTimer         Boolean    @default(false)
+  timerByQuestion Boolean    @default(false)
+  timer           Int        @default(0)
+  showRightAnswer Boolean    @default(false)
+  showResults     Boolean    @default(false)
 }
 
 model Question {

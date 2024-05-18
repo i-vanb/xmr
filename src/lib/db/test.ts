@@ -5,13 +5,23 @@ type CreateTestProps = {
   title: string;
   description: string;
   userId: string;
+  isTimer: boolean;
+  timerByQuestion: boolean;
+  timer: number;
+  showRightAnswer: boolean;
+  showResults: boolean;
 }
-export const createTest = async ({title, description, userId}:CreateTestProps) => {
+export const createTest = async ({title, description, userId, timer, isTimer, timerByQuestion, showRightAnswer, showResults}:CreateTestProps) => {
   const test = await db.test.create({
     data: {
       title,
       description,
-      userId
+      userId,
+      isTimer,
+      timerByQuestion,
+      timer,
+      showRightAnswer,
+      showResults
     },
   })
   return test.id
@@ -21,9 +31,16 @@ type EditTestProps = {
   id: string;
   title: string;
   description: string;
+  isTimer: boolean;
+  timerByQuestion: boolean;
+  timer: number;
+  showRightAnswer: boolean;
+  showResults: boolean;
   userId: string;
 }
-export const editTest = async ({id, title, description, userId}:EditTestProps) => {
+export const editTest = async ({id, title, description, userId, isTimer, timerByQuestion, timer, showRightAnswer,
+                                 showResults}:EditTestProps) => {
+
   const test = await db.test.update({
     where: {
       id,
@@ -31,7 +48,12 @@ export const editTest = async ({id, title, description, userId}:EditTestProps) =
     },
     data: {
       title,
-      description
+      description,
+      isTimer,
+      timerByQuestion,
+      timer,
+      showRightAnswer,
+      showResults
     }
   })
   return test.id

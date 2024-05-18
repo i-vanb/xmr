@@ -1,5 +1,6 @@
 {
   "main": {
-    "create_test": "Create test"
+    "create_test": "Create test",
+    "create_student": "Create student"
   }
 }

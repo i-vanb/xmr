@@ -7,7 +7,12 @@ import getSession from "@/lib/getSession";
 const TestSchema = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
-  id: z.string().optional()
+  id: z.string().optional(),
+  isTimer: z.boolean().optional().default(false),
+  timerByQuestion: z.boolean().optional().default(false),
+  timer: z.number().optional().optional().default(0),
+  showRightAnswer: z.boolean().optional().default(false),
+  showResults: z.boolean().optional().default(false)
 });
 
 export type TestFormState = {
@@ -21,7 +26,12 @@ export const createTestAction = async (state: TestFormState, formData: FormData)
   let fields = {
     title: formData.get('title'),
     description: formData.get('description'),
-    id: formData.get('id') || undefined
+    id: formData.get('id') || undefined,
+    isTimer: formData.get('isTimer') === 'on',
+    timerByQuestion: formData.get('timerByQuestion') === 'on',
+    timer: Number(formData.get('timer')),
+    showRightAnswer: formData.get('showRightAnswer') === 'on',
+    showResults: formData.get('showResults') === 'on',
   }
 
   const validatedFields = TestSchema.safeParse(fields)
@@ -33,7 +43,9 @@ export const createTestAction = async (state: TestFormState, formData: FormData)
     }
   }
 
-  const {id, title, description} = validatedFields.data
+  const {id, title, description, isTimer, timerByQuestion,
+    timer, showRightAnswer, showResults} = validatedFields.data
+
   const auth = await getSession()
   if(!auth?.user?.id) {
     return {
@@ -43,8 +55,8 @@ export const createTestAction = async (state: TestFormState, formData: FormData)
   }
 
   const newTest = id
-    ? await editTest({id, title, description, userId: auth.user.id})
-    : await createTest({title, description, userId: auth.user.id})
+    ? await editTest({id, title, description, isTimer, timerByQuestion, timer, showRightAnswer, showResults, userId: auth.user.id})
+    : await createTest({title, description, isTimer, timerByQuestion, timer, showRightAnswer, showResults, userId: auth.user.id, })
 
   if(!newTest) {
     return {
