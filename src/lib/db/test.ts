@@ -27,7 +27,7 @@ export const createTest = async ({title, description, userId, timer, isTimer, ti
   return test.id
 }
 
-type EditTestProps = {
+export type EditTestProps = {
   id: string;
   title: string;
   description: string;
@@ -68,6 +68,9 @@ export const getTestById = async (id:string) => {
       questions: {
         include: {
           answers: true
+        },
+        orderBy: {
+          createdAt: 'asc'
         }
       }
     }
@@ -86,18 +89,69 @@ export const createQuestion = async (testId:string, text:string) => {
   return question.id
 }
 
-export const createAnswers = async (questionId:string, answers:Array<{text:string, isCorrect:boolean}>) => {
-  const answerRecords = answers.map(answer => {
-    return {
+export const patchQuestion = async ({id, text}:{id:string, text:string}) => {
+  const question = await db.question.update({
+    where: {
+      id
+    },
+    data: {
+      text
+    }
+  })
+  return question.id
+}
+
+export const removeQuestion = async (id:string) => {
+  const question = await db.question.delete({
+    where: {
+      id
+    }
+  })
+  return question.id
+}
+
+type Answer = {
+  id?: string;
+  text: string;
+  isCorrect: boolean;
+}
+type AnswerRecord = Answer & {questionId:string}
+export const createAnswers = async (questionId:string, answers:Array<Answer>) => {
+  const editingAnswers:AnswerRecord[] = []
+  const newAnswerRecords:AnswerRecord[] = []
+
+  answers.forEach(answer => {
+    const answerRecord:AnswerRecord = {
       text: answer.text,
       isCorrect: answer.isCorrect,
       questionId
     }
+    if(answer.id) answerRecord['id'] = answer.id
+
+    if(answer.id) {
+      editingAnswers.push(answerRecord)
+    } else {
+      newAnswerRecords.push(answerRecord)
+    }
   })
-  const newAnswers = await db.answer.createMany({
-    data: answerRecords
-  })
-  return newAnswers
+
+  const editResults = await Promise.all(editingAnswers.map(async answer => {
+    return db.answer.update({
+      where: {
+        id: answer.id
+      },
+      data: {
+        text: answer.text,
+        isCorrect: answer.isCorrect,
+      }
+    })
+  }))
+
+  const newResults = newAnswerRecords.length>0
+    ? await db.answer.createMany({ data: newAnswerRecords})
+    : []
+
+  return {newResults, editResults}
 }
 
 export const getTestList = async (userId:string) => {

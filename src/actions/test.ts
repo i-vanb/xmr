@@ -1,6 +1,6 @@
 'use server'
 import { z } from "zod";
-import {createAnswers, createQuestion, createTest, editTest} from "@/lib/db/test";
+import {createAnswers, createQuestion, createTest, editTest, patchQuestion, removeQuestion} from "@/lib/db/test";
 import {revalidatePath} from "next/cache";
 import getSession from "@/lib/getSession";
 
@@ -87,8 +87,8 @@ type QuestionFormState = {
   success?: boolean
   id?: string
 }
-export const addQuestion = async (state: QuestionFormState, formData: FormData) => {
-
+export const editQuestion = async (state: QuestionFormState, formData: FormData) => {
+  const id = formData.get('id') as string
   const validatedFields = questionSchema.safeParse({
     text: formData.get('text'),
     testId: formData.get('testId')
@@ -111,13 +111,12 @@ export const addQuestion = async (state: QuestionFormState, formData: FormData) 
     }
   }
 
-  const newQuestion = await createQuestion(testId, text)
+  const newQuestion = id ? await patchQuestion({id, text}) : await createQuestion(testId, text)
   await createAnswers(newQuestion, answers)
-
-
   revalidatePath('/dashboard/test/[id]')
+
   return {
-    message: 'Question created',
+    message: id ? 'Question edited successfully' : 'Question created successfully',
     success: true,
     id: newQuestion
   }
@@ -129,6 +128,7 @@ const getAnswers = (formData: FormData) => {
   let correctDefined = false
 
   for (let i = 0; i < 8; i++) {
+    const id = formData.get(`answers.${i}.id`) as string
     const text = formData.get(`answers.${i}.text`) as string
     const isCorrect = !correctDefined ? formData.get(`answers.${i}.isCorrect`) : false
     if(isCorrect && question_type === "1") {
@@ -136,10 +136,16 @@ const getAnswers = (formData: FormData) => {
     }
     if (text) {
       answers.push({
+        id: id,
         text: text,
         isCorrect: !!isCorrect
       })
     }
   }
   return answers
+}
+
+export const deleteQuestion = async (questionId: string) => {
+  const res = await removeQuestion(questionId)
+  return res
 }

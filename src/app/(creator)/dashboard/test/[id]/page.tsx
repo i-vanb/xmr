@@ -1,9 +1,10 @@
 import {getTestById} from "@/lib/db/test";
 import Link from "next/link";
 import {AddQuestion} from "@/app/(creator)/_components/AddQuestion";
-import {Button} from "@/components/ui/button";
 import {RemoveTest} from "@/app/(creator)/_components/RemoveTest";
 import {ReactNode} from "react";
+import {QuestionCard} from "@/app/(creator)/_components/QuestionCard";
+import {QuestionList} from "@/app/(creator)/_components/QuestionList";
 
 export default async function Page({params: {id}}: { params: { id: string } }) {
   const test = await getTestById(id)
@@ -63,21 +64,7 @@ export default async function Page({params: {id}}: { params: { id: string } }) {
       </section>
       <section className="space-y-4">
         <h2>Questions</h2>
-        <AddQuestion test_id={id} />
-        <ul>
-          {test.questions.map((question, index) => (
-            <li key={question.id} className="p-6 border rounded my-2">
-              <h3 className="mb-2">{index + 1}. {question.text}</h3>
-              <ul className="">
-                {question.answers.map(option => (
-                  <li key={option.id} className={`mb-2 rounded px-6 py-2 ${option.isCorrect ? "bg-green-200" : "bg-gray-100"}`}>
-                    {option.text}
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ul>
+        <QuestionList list={test.questions} id={id}/>
       </section>
     </main>
   );

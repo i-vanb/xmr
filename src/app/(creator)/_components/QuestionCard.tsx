@@ -1,116 +1,88 @@
 'use client'
-import {Label} from "@/components/ui/label";
-import {Textarea} from "@/components/ui/textarea";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {MouseEvent, useEffect, useState} from "react";
 import {Button} from "@/components/ui/button";
-import Link from "next/link";
-import {Input} from "@/components/ui/input";
-import {Checkbox} from "@/components/ui/checkbox";
-import {useFormState} from "react-dom";
-import {addQuestion, createTestAction} from "@/actions/test";
+import {Cog, Trash2} from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
+import {deleteQuestion} from "@/actions/test";
 import {toast} from "sonner";
+import {useState} from "react";
 
-const typesQuestion = [
-  {id: "1", name: "One from many"},
-  {id: "2", name: "Several from many"},
-  {id: "3", name: "Enter the answer"},
-]
-
-type QuestionCardProps = {
-  close: () => void
-  test_id: string
+type Props = {
+  question: Question
+  order: number
+  setCurrent: (question:Question) => void
 }
-export const QuestionCard = ({close, test_id}: QuestionCardProps) => {
-  // @ts-ignore
-  const [state, formAction] = useFormState(addQuestion, {
-    message: "",
-  })
-  const [qType, setQType] = useState("1")
 
-  useEffect(()=> {
-    if(state.success == true) {
-      toast.success(state.message)
-      close()
-    } else if(state.success == false) {
-      toast.error(state.message)
+type Question = {
+  id: string
+  text: string
+  answers: {
+    id: string
+    text: string
+    isCorrect: boolean
+  }[]
+}
+
+export const QuestionCard = ({question, order, setCurrent}:Props) => {
+  const [isEditing, setIsEditing] = useState(false)
+  const onDelete = async () => {
+    const res = await deleteQuestion(question.id)
+    if (res) {
+      toast.success("Question removed successfully")
+    } else {
+      toast.error("Failed to remove question")
     }
-  }, [state])
-
-  const setQuestionType = (t: string) => setQType(t)
-
-  return (
-    <form action={formAction}>
-      <input type="hidden" name="testId" value={test_id}/>
-      <div className="bg-white p-4 rounded-lg border space-y-4">
-        <Label>Question</Label>
-        <Textarea name="text"/>
-        <Select defaultValue="1" onValueChange={setQuestionType} name="question_type">
-          <SelectTrigger className="w-[180px]">
-            <SelectValue/>
-          </SelectTrigger>
-          <SelectContent>
-            {typesQuestion.map(type => <SelectItem value={type.id} key={type.id}>{type.name}</SelectItem>)}
-          </SelectContent>
-        </Select>
-        {qType === "1" && <OneFromMany/>}
-        {qType === "2" && <SeveralFromMany/>}
-        {qType === "3" && <EnterTheAnswer/>}
-        <div className="max-w-[600px] flex items-center gap-4">
-          <Button type="submit" className="flex-1">Save</Button>
-          <Button onClick={close} className="flex-1">Cancel</Button>
-        </div>
-      </div>
-    </form>
-  )
-}
-
-
-const OneFromMany = () => {
-  const [options, setOptions] = useState<
-    Array<{ text: string, isCorrect: boolean }>
-  >([])
-
-  const addOption = () => {
-    if(options.length >= 8) return toast.error("Max options count is 8")
-    setOptions(prevState => [...prevState, {text: "", isCorrect: false}])
   }
 
+  const onEdit = () => setCurrent(question)
+
   return (
-    <div className="space-y-5">
-      {options.map((option, index) => {
-        return (
-          <div key={index} className="space-y-2 max-w-[250px]">
-            <Input name={`answers.${index}.text`} />
-            <div className="flex items-center gap-4">
-              <Label className="flex items-center gap-2 cursor-pointer">
-                <Checkbox name={`answers.${index}.isCorrect`} />
-                <span>Correct answer</span>
-              </Label>
-            </div>
-          </div>
-        )
-      })}
-      <div className="flex items-center gap-4">
-        <Button type="button" onClick={addOption}>Add option</Button>
-        <Button disabled={!options.length} type="button" onClick={() => setOptions(prevState => prevState.slice(0, -1))}>Remove option</Button>
+    <li key={question.id} className="p-6 border rounded my-2 relative">
+      <div className="absolute top-1 right-2 flex gap-2">
+        <Button onClick={onEdit} variant="link" className="p-0 h-auto opacity-30 transition-opacity hover:opacity-100">
+          <Cog size={18}/>
+        </Button>
+        <RemoveQuestionBtn onDelete={onDelete} />
       </div>
-    </div>
+      <h3 className="mb-2">{order}. {question.text}</h3>
+      <ul className="">
+        {question.answers.map(option => (
+          <li key={option.id}
+              className={`mb-2 rounded px-6 py-2 ${option.isCorrect ? "bg-green-200" : "bg-gray-100"}`}>
+            {option.text}
+          </li>
+        ))}
+      </ul>
+    </li>
   )
 }
 
-const SeveralFromMany = () => {
-  return (
-    <div>
-      Several from many
-    </div>
-  )
-}
 
-const EnterTheAnswer = () => {
+const RemoveQuestionBtn = ({onDelete}: {onDelete: () => void}) => {
   return (
-    <div>
-      Enter the answer
-    </div>
+    <AlertDialog>
+      <AlertDialogTrigger className="p-0 h-auto opacity-30 transition-opacity hover:opacity-100">
+        <Trash2 size={18}/>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you sure you want to remove question?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently delete this question.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={onDelete}>Remove</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   )
 }

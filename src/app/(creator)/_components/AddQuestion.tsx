@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import {useState} from "react";
-import {QuestionCard} from "@/app/(creator)/_components/QuestionCard";
+import {QuestionForm} from "@/app/(creator)/_components/QuestionForm";
 
 type AddQuestionProps = {
   test_id: string
@@ -16,7 +16,7 @@ export const AddQuestion = ({test_id}:AddQuestionProps) => {
   return (
     <div>
       {!show && <Button onClick={open}>Add Question</Button>}
-      {show && <QuestionCard close={close} test_id={test_id} />}
+      {show && <QuestionForm close={close} test_id={test_id} />}
     </div>
   )
 }

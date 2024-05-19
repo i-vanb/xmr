@@ -29,7 +29,6 @@ export const TestEditor = ({name, description, id, isTimer, timerByQuestion, tim
   const router = useRouter()
   const pageTitle = id ? "EDIT TEST" : "CREATE TEST"
   const linkBack = id ? `/dashboard/test/${id}` : "/dashboard"
-  console.log('isTimer',isTimer)
   useEffect(()=> {
     if(state.success == true) {
       toast.success(state.message)

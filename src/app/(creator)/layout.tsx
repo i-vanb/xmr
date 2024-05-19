@@ -32,7 +32,7 @@ export default async function DashboardLayout({children}: {
           </div>
         </Container>
       </header>
-      <section>
+      <section className="mb-16">
         <Container>{children}</Container>
       </section>
       <Toaster richColors={true}/>
