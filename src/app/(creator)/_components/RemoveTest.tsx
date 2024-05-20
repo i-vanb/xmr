@@ -39,7 +39,7 @@ export const RemoveTest = ({id, title}:Props) => {
   return (
     <>
       <AlertDialog>
-        <AlertDialogTrigger>Remove</AlertDialogTrigger>
+        <AlertDialogTrigger className="hover:text-blue-400">Remove</AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure you want to remove test {title}?</AlertDialogTitle>

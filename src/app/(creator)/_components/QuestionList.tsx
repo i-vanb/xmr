@@ -34,13 +34,10 @@ export const QuestionList = ({id, list}:Props) => {
       </div>
       <ul>
         {list.map((question, index) => {
-          if(question.id === current?.id) {
-            return <QuestionForm key={question.id} close={()=>setCurrent(null)} test_id={id} question={question}/>
-          }
-          
-          return(
-           <QuestionCard key={question.id} question={question} order={index + 1} setCurrent={setHandler} />
-          )
+
+          if(question.id === current?.id) return <QuestionForm key={question.id} close={()=>setCurrent(null)} test_id={id} question={question}/>
+
+          return <QuestionCard key={question.id} question={question} order={index + 1} setCurrent={setHandler} />
         })}
       </ul>
     </>

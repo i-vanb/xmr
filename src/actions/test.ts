@@ -1,6 +1,14 @@
 'use server'
 import { z } from "zod";
-import {createAnswers, createQuestion, createTest, editTest, patchQuestion, removeQuestion} from "@/lib/db/test";
+import {
+  createAnswers,
+  createLink,
+  createQuestion,
+  createTest, deleteLink,
+  editTest, getTestByLInkID,
+  patchQuestion,
+  removeQuestion
+} from "@/lib/db/test";
 import {revalidatePath} from "next/cache";
 import getSession from "@/lib/getSession";
 

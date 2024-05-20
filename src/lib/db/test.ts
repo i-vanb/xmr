@@ -1,6 +1,5 @@
 import db from "@/lib/db";
 
-
 type CreateTestProps = {
   title: string;
   description: string;
@@ -37,6 +36,7 @@ export type EditTestProps = {
   showRightAnswer: boolean;
   showResults: boolean;
   userId: string;
+  isActive?: boolean;
 }
 export const editTest = async ({id, title, description, userId, isTimer, timerByQuestion, timer, showRightAnswer,
                                  showResults}:EditTestProps) => {
@@ -72,11 +72,18 @@ export const getTestById = async (id:string) => {
         orderBy: {
           createdAt: 'asc'
         }
-      }
+      },
+      links: {
+        include: {
+          student: true
+        },
+        orderBy: {
+          createdAt: 'asc'
+        }
+      },
     }
   })
   return test
-
 }
 
 export const createQuestion = async (testId:string, text:string) => {
@@ -199,4 +206,63 @@ export const removeTest = async ({id, userId}:{id:string, userId:string}) => {
   } catch (error) {
     return null
   }
+}
+
+type TestLink = {
+  id?: string;
+  testId: string;
+  userId: string;
+  studentId?: string;
+}
+export const createLink = async ({testId, userId, studentId, path}:TestLink & {path: string}) => {
+  const link = await db.link.create({
+    data: {
+      testId,
+      userId,
+      studentId,
+      path
+    }
+  })
+  return link.id
+}
+
+export const deleteLink = async (id:string) => {
+  const link = await db.link.delete({
+    where: {
+      id
+    }
+  })
+  return link.id
+}
+
+export const updateLink = async (data:{id:string, studentId?:string, path:string}) => {
+  const link = await db.link.update({
+    where: {
+      id: data.id
+    },
+    data
+  })
+  if(!link) return null
+
+  return link
+}
+
+export const getTestByLInkID = async (id:string) => {
+  const link = await db.link.findUnique({
+    where: {
+      id
+    },
+    include: {
+      test: {
+        include: {
+          questions: {
+            include: {
+              answers: true
+            }
+          }
+        }
+      }
+    }
+  })
+  return link
 }
