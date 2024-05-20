@@ -1,11 +1,11 @@
 'use server'
 import { z } from "zod";
 import {
+  countTestsByUserId,
   createAnswers,
-  createLink,
   createQuestion,
-  createTest, deleteLink,
-  editTest, getTestByLInkID,
+  createTest,
+  editTest,
   patchQuestion,
   removeQuestion
 } from "@/lib/db/test";
@@ -58,6 +58,14 @@ export const createTestAction = async (state: TestFormState, formData: FormData)
   if(!auth?.user?.id) {
     return {
       message: 'Unauthorized',
+      success: false
+    }
+  }
+
+  const countTests = await countTestsByUserId(auth.user.id)
+  if (countTests >= 10) {
+    return {
+      message: 'You have reached the maximum number of tests for free account.',
       success: false
     }
   }

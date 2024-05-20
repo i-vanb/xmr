@@ -1,7 +1,7 @@
 'use server'
 
 import getSession from "@/lib/getSession";
-import {createLink, deleteLink, getTestByLInkID, updateLink} from "@/lib/db/test";
+import {countTestLinksByUserId, createLink, deleteLink, getTestByLInkID, updateLink} from "@/lib/db/test";
 import {revalidatePath} from "next/cache";
 import cryptoRandomString from "crypto-random-string";
 
@@ -19,8 +19,13 @@ const generateLink = () => {
 export const createLinkAction = async (testId: string, studentId?:string) => {
   const session = await getSession()
   if (!session?.user?.id) {
-    return null
+    return {success:false, message:'Unauthorized'}
   }
+  const countLinks = await countTestLinksByUserId(session.user.id)
+  if (countLinks >= 10) {
+    return {success:false, message:'You have reached the maximum number of links for free account.'}
+  }
+
   const params:LinkType = {
     testId,
     userId: session.user.id,
@@ -32,11 +37,11 @@ export const createLinkAction = async (testId: string, studentId?:string) => {
 
   const newLinkId = await createLink(params)
   if (!newLinkId) {
-    return null
+    return {success:false, message:'Failed to create link'}
   }
   const url = process.env.APP_URL + '/show/test/' + testId
   revalidatePath(url)
-  return newLinkId
+  return {success:true, message: 'Link successfully created'}
 }
 
 export const getTestByLink = async (link: string) => {

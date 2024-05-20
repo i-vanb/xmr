@@ -59,6 +59,15 @@ export const editTest = async ({id, title, description, userId, isTimer, timerBy
   return test.id
 }
 
+export const countTestsByUserId = async (userId:string) => {
+  const count = await db.test.count({
+    where: {
+      userId
+    }
+  })
+  return count
+}
+
 export const getTestById = async (id:string) => {
   const test = await db.test.findUnique({
     where: {
@@ -265,4 +274,22 @@ export const getTestByLInkID = async (id:string) => {
     }
   })
   return link
+}
+
+export const countTestLinksByTestId = async (testId:string) => {
+  const count = await db.link.count({
+    where: {
+      testId
+    }
+  })
+  return count
+}
+
+export const countTestLinksByUserId = async (userId:string) => {
+  const count = await db.link.count({
+    where: {
+      userId
+    }
+  })
+  return count
 }

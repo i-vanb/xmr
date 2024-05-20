@@ -3,9 +3,12 @@ import Link from "next/link";
 import {RemoveTest} from "@/app/(creator)/_components/RemoveTest";
 import {ReactNode} from "react";
 import {QuestionList} from "@/app/(creator)/_components/QuestionList";
+import {LinkSheet} from "@/app/_components/links.sheet";
+import {getStudents} from "@/actions/students";
 
 export default async function Page({params: {id}}: { params: { id: string } }) {
   const test = await getTestById(id)
+  const students = await getStudents()
 
   if (!test) return <div>Test not found</div>
 
@@ -26,6 +29,7 @@ export default async function Page({params: {id}}: { params: { id: string } }) {
       <section className="flex items-center justify-between gap-6">
         <h1 className="mb-3 font-bold text-xl">{test.title}</h1>
         <div className="flex items-center gap-4">
+          <LinkSheet links={test.links} students={students} testId={id}/>
           <Link href={`/show/test/${id}`} className="hover:text-blue-400">View</Link>
           <Link href={`/edit/test/${id}`} className="hover:text-blue-400">Edit</Link>
           <RemoveTest id={test.id} title={test.title}/>
