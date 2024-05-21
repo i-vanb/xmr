@@ -26,14 +26,18 @@ export default async function Page({params: {id}}: { params: { id: string } }) {
 
   return (
     <main className="space-y-4">
-      <section className="flex items-center justify-between gap-6">
+      <section className="items-center justify-between gap-6 md:flex">
         <h1 className="mb-3 font-bold text-xl">{test.title}</h1>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 text-sm font-bold">
           <LinkSheet links={test.links} students={students} testId={id}/>
           <Link href={`/show/test/${id}`} className="hover:text-blue-400">View</Link>
           <Link href={`/edit/test/${id}`} className="hover:text-blue-400">Edit</Link>
           <RemoveTest id={test.id} title={test.title}/>
         </div>
+      </section>
+      <section>
+        <h2>Description</h2>
+        <p>{test.description}</p>
       </section>
       <section className="p-4 border rounded">
         <h1 className="text-lg font-bold">Settings</h1>
