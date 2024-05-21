@@ -55,7 +55,7 @@ export const QuestionCard = ({question, order, setCurrent}:Props) => {
       <ul className="">
         {question.answers.map(option => (
           <li key={option.id}
-              className={`mb-2 rounded px-6 py-2 ${option.isCorrect ? "bg-green-200" : "bg-gray-100"}`}>
+              className={`mb-2 rounded px-6 py-2 ${option.isCorrect ? "bg-blue-200" : "bg-gray-100"}`}>
             {option.text}
           </li>
         ))}
