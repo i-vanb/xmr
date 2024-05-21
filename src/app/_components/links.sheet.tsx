@@ -7,6 +7,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
 import {Clipboard, RefreshCcw, Trash2} from "lucide-react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 
 type LinkTest = {
   id: string
@@ -31,9 +32,10 @@ type LinkSheetProps = {
 
 export const LinkSheet = ({links, students, testId}:LinkSheetProps) => {
   const [student, setStudent] = useState('')
+  const [name, setName] = useState('')
 
   const createLink = async () => {
-    const {success, message} = await createLinkAction(testId, student)
+    const {success, message} = await createLinkAction({testId, studentId:student, name})
     if (success) {
       toast.success(message)
     } else {
@@ -139,12 +141,15 @@ export const LinkSheet = ({links, students, testId}:LinkSheetProps) => {
               </SelectContent>
             </Select>
             :
+            <>
             <SheetDescription>
-              You have not added any students yet.
-              You can create a link for a specific student when you add them.
+              Enter student name to create link for him.
+              It will help you to identify student who passed the test and see the results.
             </SheetDescription>
+              <Input value={name} onChange={e=>setName(e.target.value)} />
+            </>
           }
-          <Button className="bg-blue-500 hover:bg-blue-400 transition" onClick={createLink}>
+          <Button disabled={!student && !name} className="bg-blue-500 hover:bg-blue-400 transition" onClick={createLink}>
             Create Link {student ? `for ${student}` : ''}
           </Button>
         </SheetHeader>

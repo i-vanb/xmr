@@ -9,6 +9,7 @@ type LinkType = {
   testId: string
   userId: string
   studentId?: string
+  name?: string
   path?: string
 }
 
@@ -16,19 +17,26 @@ const generateLink = () => {
   return cryptoRandomString({length: 20, type: 'url-safe'})
 }
 
-export const createLinkAction = async (testId: string, studentId?:string) => {
+
+type LinkParams = {
+  testId: string
+  studentId?: string
+  name?: string
+}
+export const createLinkAction = async ({testId, studentId, name}:LinkParams) => {
   const session = await getSession()
   if (!session?.user?.id) {
     return {success:false, message:'Unauthorized'}
   }
   const countLinks = await countTestLinksByUserId(session.user.id)
-  if (countLinks >= 10) {
+  if (countLinks >= 5) {
     return {success:false, message:'You have reached the maximum number of links for free account.'}
   }
 
   const params:LinkType = {
     testId,
     userId: session.user.id,
+    name,
     path: generateLink()
   }
   if(studentId) {

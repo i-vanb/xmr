@@ -93,6 +93,7 @@ model Link {
   path      String
   testId    String
   studentId String?
+  name      String?
   userId    String
   test      Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
   student   Student? @relation(fields: [studentId], references: [id])

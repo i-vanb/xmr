@@ -96,6 +96,12 @@ export const getTestById = async (id:string) => {
 }
 
 export const createQuestion = async (testId:string, text:string) => {
+  const countQuestions = await db.question.count({
+    where: {
+      testId
+    }
+  })
+  if(countQuestions >= 20) return null
   const question = await db.question.create({
     data: {
       text,
@@ -189,6 +195,11 @@ export const getTestListWithCounts = async (userId:string) => {
       id: true,
       title: true,
       description: true,
+      isTimer: true,
+      timerByQuestion: true,
+      timer: true,
+      showRightAnswer: true,
+      showResults: true,
       questions: {
         select: {
           id: true,
@@ -222,13 +233,15 @@ type TestLink = {
   testId: string;
   userId: string;
   studentId?: string;
+  name?: string;
 }
-export const createLink = async ({testId, userId, studentId, path}:TestLink & {path: string}) => {
+export const createLink = async ({testId, userId, studentId, path, name}:TestLink & {path: string}) => {
   const link = await db.link.create({
     data: {
       testId,
       userId,
       studentId,
+      name,
       path
     }
   })

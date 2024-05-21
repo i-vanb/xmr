@@ -63,7 +63,7 @@ export const createTestAction = async (state: TestFormState, formData: FormData)
   }
 
   const countTests = await countTestsByUserId(auth.user.id)
-  if (countTests >= 10) {
+  if (countTests >= 2) {
     return {
       message: 'You have reached the maximum number of tests for free account.',
       success: false
@@ -127,7 +127,17 @@ export const editQuestion = async (state: QuestionFormState, formData: FormData)
     }
   }
 
-  const newQuestion = id ? await patchQuestion({id, text}) : await createQuestion(testId, text)
+  const newQuestion = id
+    ? await patchQuestion({id, text})
+    : await createQuestion(testId, text)
+
+  if(!newQuestion && !id) {
+    return {
+      message: 'Error creating question, maybe you get to the maximum number of questions for free account.',
+      success: false
+    }
+  }
+
   await createAnswers(newQuestion, answers)
   revalidatePath('/dashboard/test/[id]')
 
