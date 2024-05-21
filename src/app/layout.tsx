@@ -23,7 +23,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={inter.className + ' flex flex-col h-screen'}>
         <Providers options={{lang: lang?.value || 'en', dictionary}}>
           {children}
         </Providers>
