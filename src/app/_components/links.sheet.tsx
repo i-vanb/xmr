@@ -113,7 +113,7 @@ export const LinkSheet = ({links, students, testId}:LinkSheetProps) => {
                             </Button>
                             {link.studentId
                               ? <span className="text-xs text-gray-400">Student: {link.student.name}</span>
-                              : <span className="text-xs text-gray-400">Student not specified</span>
+                              : <span className="text-xs text-gray-400">Student: {link.name}</span>
                             }
                           </div>
                         </div>
