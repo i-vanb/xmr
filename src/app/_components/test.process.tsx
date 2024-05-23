@@ -18,7 +18,7 @@ type Props = {
 export const TestProcess = ({test, link, mode = 'test'}: Props) => {
   const [state, setState] = useState({
     currentQuestion: 0,
-    answers: new Array(test.questions.length),
+    answers: new Array(test.questions.length).fill(null),
     currentAnswer: '',
     isStarted: false,
     isFinished: false,
@@ -42,11 +42,33 @@ export const TestProcess = ({test, link, mode = 'test'}: Props) => {
   }
 
   const nextQuestion = () => {
-    setState(prevState => ({
-      ...prevState,
-      currentQuestion: prevState.currentQuestion + 1,
-      currentAnswer: ''
-    }))
+    setState(prevState => {
+      const nextQuestion = getNextQuestion(prevState.answers, prevState.currentQuestion)
+      if(nextQuestion === -1) {
+        return ({
+          ...prevState,
+          isFinished: true
+        })
+      }
+
+      return ({
+        ...prevState,
+        currentQuestion: prevState.currentQuestion + 1,
+        currentAnswer: ''
+      })
+    }
+  )}
+
+  const getNextQuestion = (answered:Array<string|null>, current:number) => {
+    let nextIndex = current+1
+    let nextEl = answered[nextIndex]
+    if(nextEl === null) return nextIndex
+    if(nextEl === undefined) return answered.indexOf(null)
+
+    for(let i = nextIndex; i<answered.length; i++) {
+      if(answered[i] === null) return i
+    }
+    return answered.indexOf(null)
   }
 
   const answerQuestion = () => {
@@ -71,7 +93,6 @@ export const TestProcess = ({test, link, mode = 'test'}: Props) => {
   }
 
   const timeLeft = () => {
-    console.log('time left')
     setState(prevState => ({
       ...prevState,
       isTimeLeft: true,
@@ -101,7 +122,7 @@ export const TestProcess = ({test, link, mode = 'test'}: Props) => {
     <div className="mb-8">
       {test.isTimer &&
         <div className="font-bold">
-            <Timer time={test.timer} onEnd={timeLeft} stop={state.isFinished} />
+          {state.isFinished && <Timer time={test.timer} onEnd={timeLeft} />}
         </div>
       }
       </div>
@@ -119,7 +140,7 @@ export const TestProcess = ({test, link, mode = 'test'}: Props) => {
       </RadioGroup>
       <div className="flex flex-col items-center gap-6 md:flex-row">
           <Button disabled={isAnswered || state.isFinished} onClick={answerQuestion}>Answer</Button>
-          <Button disabled={isAnswered || state.isFinished} onClick={skipQuestion}>Skip</Button>
+          <Button disabled={isAnswered || state.isFinished} onClick={nextQuestion}>Skip</Button>
           {state.isFinished
             ? <Button onClick={endTest}>Finish</Button>
             : <Button disabled={!isAnswerChosen} onClick={nextQuestion}>Next</Button>
