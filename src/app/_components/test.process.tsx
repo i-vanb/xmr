@@ -1,12 +1,17 @@
 'use client'
 import {useState} from "react";
 import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
+import {LinkTest, Question} from "@/app/(creator)/show/test/[id]/TestView";
+import {EditTestProps} from "@/lib/db/test";
+import {Timer} from "@/app/_components/timer";
+import {ShowTimeInMin} from "@/lib/utils";
 
 type Props = {
-  test?: any
-  link?: any
+  test: {
+    questions: Array<Question>
+  } & EditTestProps
+  link: LinkTest
   mode?: 'demo' | 'test'
 }
 
@@ -16,12 +21,11 @@ export const TestProcess = ({test, link, mode = 'test'}: Props) => {
     answers: new Array(test.questions.length),
     currentAnswer: '',
     isStarted: false,
-    isFinished: false
+    isFinished: false,
+    isTimeLeft: false
   })
   const isAnswerChosen = state.answers[state.currentQuestion]
   const isAnswered = state.answers[state.currentQuestion] && !state.currentAnswer
-
-  console.log(isAnswerChosen)
 
   const chooseAnswer = (answerId: string) => {
     setState(prevState => ({
@@ -66,9 +70,27 @@ export const TestProcess = ({test, link, mode = 'test'}: Props) => {
     }))
   }
 
+  const timeLeft = () => {
+    console.log('time left')
+    setState(prevState => ({
+      ...prevState,
+      isTimeLeft: true,
+      isFinished: true
+    }))
+  }
+
+  const endTest = () => {
+    console.log('End')
+  }
+
   if(!state.isStarted) {
     return(
       <div>
+        <p className="my-4">{test.description}</p>
+        <div className="mb-8">
+          {test.isTimer &&
+              <h3>This test has time limit {ShowTimeInMin(test.timer)}{test.timerByQuestion ? ' for a question' : ''}</h3>}
+        </div>
         <Button onClick={startTest}>Start test{mode === 'demo' ? ' (demo)' : ''}</Button>
       </div>
     )
@@ -76,11 +98,18 @@ export const TestProcess = ({test, link, mode = 'test'}: Props) => {
 
   return (
     <div>
+    <div className="mb-8">
+      {test.isTimer &&
+        <div className="font-bold">
+            <Timer time={test.timer} onEnd={timeLeft} stop={state.isFinished} />
+        </div>
+      }
+      </div>
       <div className="mb-8">
         <h3 className="font-bold">Question {state.currentQuestion+1}</h3>
         <p>{test.questions[state.currentQuestion].text}</p>
       </div>
-      <RadioGroup onValueChange={chooseAnswer} className="flex flex-col items-center justify-around gap-6 md:flex-row mb-8">
+      <RadioGroup disabled={state.isFinished} onValueChange={chooseAnswer} className="flex flex-col items-center justify-around gap-6 md:flex-row mb-8">
         {test.questions[state.currentQuestion].answers.map((answer: any) => (
           <div key={answer.id} className="cursor-pointer">
             <RadioGroupItem disabled={isAnswered} value={answer.id} id={answer.id} />
@@ -89,9 +118,12 @@ export const TestProcess = ({test, link, mode = 'test'}: Props) => {
         ))}
       </RadioGroup>
       <div className="flex flex-col items-center gap-6 md:flex-row">
-          <Button disabled={isAnswered} onClick={answerQuestion}>Answer</Button>
-          <Button disabled={isAnswered} onClick={skipQuestion}>Skip</Button>
-          <Button disabled={!isAnswerChosen} onClick={nextQuestion}>Next</Button>
+          <Button disabled={isAnswered || state.isFinished} onClick={answerQuestion}>Answer</Button>
+          <Button disabled={isAnswered || state.isFinished} onClick={skipQuestion}>Skip</Button>
+          {state.isFinished
+            ? <Button onClick={endTest}>Finish</Button>
+            : <Button disabled={!isAnswerChosen} onClick={nextQuestion}>Next</Button>
+          }
       </div>
     </div>
   )
