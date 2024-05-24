@@ -53,7 +53,7 @@ export const TestProcess = ({test, link, mode = 'test'}: Props) => {
 
       return ({
         ...prevState,
-        currentQuestion: prevState.currentQuestion + 1,
+        currentQuestion: nextQuestion,
         currentAnswer: ''
       })
     }
@@ -101,7 +101,7 @@ export const TestProcess = ({test, link, mode = 'test'}: Props) => {
   }
 
   const endTest = () => {
-    console.log('End')
+    // send results
   }
 
   if(!state.isStarted) {
@@ -122,22 +122,27 @@ export const TestProcess = ({test, link, mode = 'test'}: Props) => {
     <div className="mb-8">
       {test.isTimer &&
         <div className="font-bold">
-          {state.isFinished && <Timer time={test.timer} onEnd={timeLeft} />}
+          {!state.isFinished && <Timer time={test.timer} onEnd={timeLeft} />}
         </div>
       }
       </div>
-      <div className="mb-8">
-        <h3 className="font-bold">Question {state.currentQuestion+1}</h3>
-        <p>{test.questions[state.currentQuestion].text}</p>
-      </div>
-      <RadioGroup disabled={state.isFinished} onValueChange={chooseAnswer} className="flex flex-col items-center justify-around gap-6 md:flex-row mb-8">
-        {test.questions[state.currentQuestion].answers.map((answer: any) => (
-          <div key={answer.id} className="cursor-pointer">
-            <RadioGroupItem disabled={isAnswered} value={answer.id} id={answer.id} />
-            <label className="cursor-pointer ml-2" htmlFor={answer.id}>{answer.text}</label>
+      {state.isFinished ? <h1 className="mb-8">Test is finished</h1> :
+        <>
+          <div className="mb-8">
+            <h3 className="font-bold">Question {state.currentQuestion + 1}</h3>
+            <p>{test.questions[state.currentQuestion].text}</p>
           </div>
-        ))}
-      </RadioGroup>
+          <RadioGroup disabled={state.isFinished} onValueChange={chooseAnswer}
+                      className="flex flex-col items-center justify-around gap-6 md:flex-row mb-8">
+            {test.questions[state.currentQuestion].answers.map((answer: any) => (
+              <div key={answer.id} className="cursor-pointer">
+                <RadioGroupItem disabled={isAnswered} value={answer.id} id={answer.id}/>
+                <label className="cursor-pointer ml-2" htmlFor={answer.id}>{answer.text}</label>
+              </div>
+            ))}
+          </RadioGroup>
+        </>
+      }
       <div className="flex flex-col items-center gap-6 md:flex-row">
           <Button disabled={isAnswered || state.isFinished} onClick={answerQuestion}>Answer</Button>
           <Button disabled={isAnswered || state.isFinished} onClick={nextQuestion}>Skip</Button>
