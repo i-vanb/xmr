@@ -308,8 +308,9 @@ export const countTestLinksByUserId = async (userId:string) => {
 }
 
 export const createResult = async (data:{linkId:string, studentId?:string, testId: string, answers: string[]}) => {
+  console.log('!!!!!!!!', data)
   const result = await db.result.create({
-    ...data, valid: true
+    data: {...data, valid: true}
   })
   return result.id
 }
@@ -355,3 +356,41 @@ export const getTestByLInkPath = async (path:string) => {
   })
   return link
 }
+
+
+export const getTestListWithResults = async (userId: string) => {
+  const tests = await db.test.findMany({
+    where: {
+      userId
+    },
+    include: {
+      links: {
+        include: {
+          results: true
+        }
+      }
+    }
+  })
+
+
+  return tests
+}
+
+export const getTestListWithResultsByTestId = async (userId: string, testId:string) => {
+  const tests = await db.test.findMany({
+    where: {
+      userId,
+      id: testId
+    },
+    include: {
+      links: {
+        include: {
+          results: true
+        }
+      }
+    }
+  })
+
+  return tests
+}
+

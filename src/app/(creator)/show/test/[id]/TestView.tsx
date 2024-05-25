@@ -29,6 +29,8 @@ export type LinkTest = {
   testId: string
   studentId: string
   path: string
+  active: boolean
+  name?: string
   student: {
     id: string
     name: string
@@ -57,9 +59,6 @@ export const TestView = ({test, students}: Props) => {
       <p></p>
       <section className="flex justify-end">
         <LinkSheet links={links} students={students} testId={id}/>
-      </section>
-      <section>
-        <h1 className="font-bold text-center">{title}</h1>
       </section>
       <TestProcess test={test} mode="demo" />
     </div>

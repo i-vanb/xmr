@@ -5,7 +5,7 @@ import {
   createAnswers,
   createQuestion, createResult,
   createTest,
-  editTest, getTestByLInkPath, inactiveLink,
+  editTest, getTestByLInkPath, getTestListWithResults, getTestListWithResultsByTestId, inactiveLink,
   patchQuestion,
   removeQuestion
 } from "@/lib/db/test";
@@ -182,10 +182,23 @@ export const setResults = async (data:{testId:string, linkId:string, answers:str
     return {success:false, message:'Failed to save results'}
   }
   await inactiveLink(data.linkId)
-  return res
+  return {
+    success:true,
+    message:'Results saved'
+  }
 }
 
 
 export const getTestByLinkAction = async (link: string) => {
   return await getTestByLInkPath(link)
+}
+
+
+export const getResultList = async (userId: string) => {
+  const res = await getTestListWithResults(userId)
+  return res
+}
+export const getResultListByTestId = async (userId: string, testId:string) => {
+  const res = await getTestListWithResultsByTestId(userId, testId)
+  return res
 }

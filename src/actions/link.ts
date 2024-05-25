@@ -59,10 +59,6 @@ export const createLinkAction = async ({testId, studentId, name}:LinkParams) => 
   return {success:true, message: 'Link successfully created'}
 }
 
-// export const getTestByLink = async (link: string) => {
-//   return await getTestByLInkID(link)
-// }
-
 export const removeLinkAction = async (linkId: string, testId:string) => {
   const url = process.env.APP_URL + '/show/test/' + testId
   const removed = await deleteLink(linkId)
@@ -82,9 +78,4 @@ export const refreshLinkAction = async (link:{id:string, studentId?:string}, tes
 
   revalidatePath(url)
   return newLink
-}
-
-export const getLinkByPathAction = async (path:string) => {
-  const link = await getLinkByPath(path)
-  return link
 }

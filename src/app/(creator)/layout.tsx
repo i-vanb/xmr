@@ -23,7 +23,7 @@ export default async function DashboardLayout({children}: {
         <Container className="flex-1">
           <div className="header flex items-center justify-between">
             <Logo path={"/dashboard"}/>
-            {/*<Navigation />*/}
+            <Navigation />
             <div className="flex items-center gap-4">
               <LangSwitcher />
               <ProfileImage
