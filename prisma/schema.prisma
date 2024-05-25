@@ -99,6 +99,7 @@ model Link {
   test      Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
   student   Student? @relation(fields: [studentId], references: [id])
   active    Boolean  @default(true)
+  results   Result[]
 
   createdAt DateTime @default(now())
 }
@@ -125,5 +126,6 @@ model Result {
   updatedAt DateTime @updatedAt
   test      Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
   student   Student? @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  link      Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
   valid     Boolean  @default(false)
 }
