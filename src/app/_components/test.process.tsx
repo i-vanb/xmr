@@ -23,9 +23,11 @@ export const TestProcess = ({test, link, mode = 'test'}: Props) => {
     answers: new Array(test.questions.length).fill(null),
     currentAnswer: '',
     isStarted: false,
-    isFinished: false,
+    isFinished: link?.active || true,
     isTimeLeft: false
   })
+  console.log('LINK', state)
+
   const isAnswerChosen = state.answers[state.currentQuestion]
   const isAnswered = state.answers[state.currentQuestion] && !state.currentAnswer
 
@@ -110,20 +112,34 @@ export const TestProcess = ({test, link, mode = 'test'}: Props) => {
 
     const res = await setResults({
       testId: test.id,
-      linkId: link.id,
+      linkId: link?.id || '',
       answers: state.answers
     })
-    console.log('endTest', res)
-    if(!res) {
+
+    if(!res.success) {
       return toast.error(res.message)
     }
 
-    return res
+    toast.success(res.message)
   }
+
+  if(!state.isStarted && state.isFinished) {
+    return(
+      <div>
+        <h1 className="text-center font-bold">{test.title}</h1>
+        <p className="my-4">{test.description}</p>
+        <p>
+          You already passed this test
+        </p>
+      </div>
+    )
+  }
+
 
   if(!state.isStarted) {
     return(
       <div>
+        <h1 className="text-center font-bold">{test.title}</h1>
         <p className="my-4">{test.description}</p>
         <div className="mb-8">
           {test.isTimer &&
