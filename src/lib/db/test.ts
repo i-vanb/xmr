@@ -306,3 +306,52 @@ export const countTestLinksByUserId = async (userId:string) => {
   })
   return count
 }
+
+export const createResult = async (data:{linkId:string, studentId?:string, testId: string, answers: string[]}) => {
+  const result = await db.result.create({
+    ...data, valid: true
+  })
+  return result.id
+}
+
+export const inactiveLink = async (id:string) => {
+  const link = await db.link.update({
+    where: {
+      id
+    },
+    data: {
+      active: false
+    }
+  })
+  return link.id
+}
+
+export const getLinkByPath = async (path:string) => {
+  const link = await db.link.findFirst({
+    where: {
+      path,
+      active: true
+    }
+  })
+  return link
+}
+
+export const getTestByLInkPath = async (path:string) => {
+  const link = await db.link.findFirst({
+    where: {
+      path,
+    },
+    include: {
+      test: {
+        include: {
+          questions: {
+            include: {
+              answers: true
+            }
+          }
+        }
+      }
+    }
+  })
+  return link
+}

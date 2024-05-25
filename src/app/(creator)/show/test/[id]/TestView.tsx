@@ -1,7 +1,5 @@
 'use client'
 import {EditTestProps} from "@/lib/db/test";
-import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
-import {Label} from "@/components/ui/label";
 import {LinkSheet} from "@/app/_components/links.sheet";
 import {TestProcess} from "@/app/_components/test.process";
 

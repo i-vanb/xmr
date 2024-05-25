@@ -10,5 +10,5 @@ export default async function PDFPage({params: {id}}: { params: { id: string } }
 
   if(!test) return <div>Test not found</div>
 
-  return <TestView test={test} students={students}/>
+  return <TestView test={test} students={students} />
 }

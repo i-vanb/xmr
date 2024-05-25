@@ -6,12 +6,14 @@ import {LinkTest, Question} from "@/app/(creator)/show/test/[id]/TestView";
 import {EditTestProps} from "@/lib/db/test";
 import {Timer} from "@/app/_components/timer";
 import {ShowTimeInMin} from "@/lib/utils";
+import {setResults} from "@/actions/test";
+import {toast} from "sonner";
 
 type Props = {
   test: {
     questions: Array<Question>
   } & EditTestProps
-  link: LinkTest
+  link?: LinkTest
   mode?: 'demo' | 'test'
 }
 
@@ -100,8 +102,23 @@ export const TestProcess = ({test, link, mode = 'test'}: Props) => {
     }))
   }
 
-  const endTest = () => {
-    // send results
+  const endTest = async () => {
+    if(mode === 'demo') {
+      toast.success('Demo test is finished')
+      return
+    }
+
+    const res = await setResults({
+      testId: test.id,
+      linkId: link.id,
+      answers: state.answers
+    })
+    console.log('endTest', res)
+    if(!res) {
+      return toast.error(res.message)
+    }
+
+    return res
   }
 
   if(!state.isStarted) {

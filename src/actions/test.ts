@@ -3,9 +3,9 @@ import { z } from "zod";
 import {
   countTestsByUserId,
   createAnswers,
-  createQuestion,
+  createQuestion, createResult,
   createTest,
-  editTest,
+  editTest, getTestByLInkPath, inactiveLink,
   patchQuestion,
   removeQuestion
 } from "@/lib/db/test";
@@ -139,7 +139,7 @@ export const editQuestion = async (state: QuestionFormState, formData: FormData)
   }
 
   await createAnswers(newQuestion, answers)
-  revalidatePath('/dashboard/test/[id]')
+  revalidatePath('/dashboard/test/[link]')
 
   return {
     message: id ? 'Question edited successfully' : 'Question created successfully',
@@ -174,4 +174,18 @@ const getAnswers = (formData: FormData) => {
 export const deleteQuestion = async (questionId: string) => {
   const res = await removeQuestion(questionId)
   return res
+}
+
+export const setResults = async (data:{testId:string, linkId:string, answers:string[]}) => {
+  const res = await createResult(data)
+  if(!res) {
+    return {success:false, message:'Failed to save results'}
+  }
+  await inactiveLink(data.linkId)
+  return res
+}
+
+
+export const getTestByLinkAction = async (link: string) => {
+  return await getTestByLInkPath(link)
 }
