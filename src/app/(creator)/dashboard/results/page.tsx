@@ -19,6 +19,7 @@ export default async function Page() {
 
   const {id} = session.user
   const list = await getResultList(id)
+
   const processedList = getProcessedResults(list)
 
   const columns:ColumnDef<ResultT>[] = [
@@ -35,8 +36,8 @@ export default async function Page() {
       header: 'Date',
     },
     {
-      accessorKey: 'active',
-      header: 'Active',
+      accessorKey: 'correct',
+      header: 'Correct',
     },
     {
       accessorKey: 'timer',
@@ -46,7 +47,6 @@ export default async function Page() {
 
   return (
     <div>
-      {/*<pre>{JSON.stringify(list, null, 2)}</pre>*/}
       <ResultTable data={processedList} columns={columns} />
     </div>
   )
@@ -58,13 +58,16 @@ const getProcessedResults = (list) => {
   list.forEach((item) => {
     const testName = item.title
     const timer = item.timer
-    item.links.forEach((link) => {
-      const studentName = link.name
-      const active = link.active
-      link.results.forEach((result) => {
+    item.results.forEach((result) => {
+      try {
+        const answers = JSON.parse(result.answers)
+        const studentName = result.studentName
+        const correct = result.rightCount + '/' + answers.length
         const date = new Date(result.createdAt).toLocaleDateString()
-        processedList.push({id: result.id, testName, studentName, date, active, timer})
-      })
+        processedList.push({id: result.id, testName, studentName, date, timer, correct})
+      } catch(e) {
+
+      }
     })
   })
   return processedList

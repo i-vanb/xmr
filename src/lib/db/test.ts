@@ -371,11 +371,7 @@ export const getTestListWithResults = async (userId: string) => {
       userId
     },
     include: {
-      links: {
-        include: {
-          results: true
-        }
-      }
+      results: true
     }
   })
 
