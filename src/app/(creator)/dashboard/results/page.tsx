@@ -44,8 +44,6 @@ export default async function Page() {
     },
   ]
 
-  console.log('list', list[0].links)
-
   return (
     <div>
       {/*<pre>{JSON.stringify(list, null, 2)}</pre>*/}
@@ -64,7 +62,6 @@ const getProcessedResults = (list) => {
       const studentName = link.name
       const active = link.active
       link.results.forEach((result) => {
-        console.log('result', result)
         const date = new Date(result.createdAt).toLocaleDateString()
         processedList.push({id: result.id, testName, studentName, date, active, timer})
       })

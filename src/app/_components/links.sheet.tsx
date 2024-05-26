@@ -14,6 +14,7 @@ type LinkTest = {
   testId: string
   studentId: string
   path: string
+  active: boolean
   student: {
     id: string
     name: string
@@ -94,7 +95,7 @@ export const LinkSheet = ({links, students, testId}:LinkSheetProps) => {
                     return (
                       <li key={link.id}>
                         <div className="relative">
-                          <Textarea className="text-sm overflow-ellipsis pb-12" value={`http://localhost:3000/test/${link.path}`} onChange={()=>{}}/>
+                          <Textarea disabled={!link.active} className="text-sm overflow-ellipsis pb-12" value={`http://localhost:3000/test/${link.path}`} onChange={()=>{}}/>
                           <div className="absolute bottom-2 left-2 flex items-center gap-2">
                             <Button variant="link"
                                     className="opacity-30 transition-opacity hover:opacity-100 p-0"
@@ -115,6 +116,7 @@ export const LinkSheet = ({links, students, testId}:LinkSheetProps) => {
                               ? <span className="text-xs text-gray-400">Student: {link.student.name}</span>
                               : <span className="text-xs text-gray-400">Student: {link.name}</span>
                             }
+                            {!link.active && <span title="Link has been already used, refresh link to use again" className="text-xs text-red-500">inactive</span>}
                           </div>
                         </div>
                       </li>

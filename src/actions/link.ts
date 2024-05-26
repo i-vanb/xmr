@@ -5,8 +5,6 @@ import {
   countTestLinksByUserId,
   createLink,
   deleteLink,
-  getLinkByPath,
-  getTestByLInkID,
   updateLink
 } from "@/lib/db/test";
 import {revalidatePath} from "next/cache";
