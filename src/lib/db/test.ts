@@ -262,7 +262,7 @@ export const updateLink = async (data:{id:string, studentId?:string, path:string
     where: {
       id: data.id
     },
-    data
+    data: {...data, active: true}
   })
   if(!link) return null
 
@@ -307,8 +307,15 @@ export const countTestLinksByUserId = async (userId:string) => {
   return count
 }
 
-export const createResult = async (data:{linkId:string, studentId?:string, testId: string, answers: string[]}) => {
-  console.log('!!!!!!!!', data)
+type Result = {
+  testId: string
+  linkId: string
+  answers: string
+  studentId?: string
+  studentName?: string
+  rightCount?: number
+}
+export const createResult = async (data:Result) => {
   const result = await db.result.create({
     data: {...data, valid: true}
   })
@@ -394,3 +401,21 @@ export const getTestListWithResultsByTestId = async (userId: string, testId:stri
   return tests
 }
 
+export const getQuestions = async (testId:string) => {
+  const questions = await db.question.findMany({
+    where: {
+      testId
+    },
+    include: {
+      answers: {
+        select: {
+          id: true
+        },
+        where: {
+          isCorrect: true
+        }
+      }
+    }
+  })
+  return questions
+}

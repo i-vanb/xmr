@@ -6,7 +6,7 @@ import {LinkTest, Question} from "@/app/(creator)/show/test/[id]/TestView";
 import {EditTestProps} from "@/lib/db/test";
 import {Timer} from "@/app/_components/timer";
 import {ShowTimeInMin} from "@/lib/utils";
-import {setResults} from "@/actions/test";
+import {setResultsAction} from "@/actions/test";
 import {toast} from "sonner";
 
 type Props = {
@@ -18,15 +18,15 @@ type Props = {
 }
 
 export const TestProcess = ({test, link, mode = 'test'}: Props) => {
+  console.log('TEST PROCESS',mode, test, link)
   const [state, setState] = useState({
     currentQuestion: 0,
     answers: new Array(test.questions.length).fill(null),
     currentAnswer: '',
     isStarted: false,
-    isFinished: link?.active || true,
+    isFinished: mode === 'demo' ? false : (link?.active ? false : true),
     isTimeLeft: false
   })
-  console.log('LINK', state)
 
   const isAnswerChosen = state.answers[state.currentQuestion]
   const isAnswered = state.answers[state.currentQuestion] && !state.currentAnswer
@@ -110,10 +110,17 @@ export const TestProcess = ({test, link, mode = 'test'}: Props) => {
       return
     }
 
-    const res = await setResults({
+    const res = await setResultsAction({
       testId: test.id,
       linkId: link?.id || '',
-      answers: state.answers
+      answers: state.answers.map((answer, index)=>{
+        return({
+          questionId: test.questions[index].id,
+          answerId: answer
+        })
+      }),
+      studentId: link?.student.id || '',
+      studentName: link?.student.name || ''
     })
 
     if(!res.success) {

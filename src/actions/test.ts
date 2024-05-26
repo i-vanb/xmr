@@ -5,7 +5,7 @@ import {
   createAnswers,
   createQuestion, createResult,
   createTest,
-  editTest, getTestByLInkPath, getTestListWithResults, getTestListWithResultsByTestId, inactiveLink,
+  editTest, getQuestions, getTestByLInkPath, getTestListWithResults, inactiveLink,
   patchQuestion,
   removeQuestion
 } from "@/lib/db/test";
@@ -176,8 +176,42 @@ export const deleteQuestion = async (questionId: string) => {
   return res
 }
 
-export const setResults = async (data:{testId:string, linkId:string, answers:string[]}) => {
-  const res = await createResult(data)
+
+export type Result = {
+  testId: string
+  linkId: string
+  answers: {answerId:string, questionId:string}[]
+  studentId?: string
+  studentName?: string
+  rightCount?: number
+}
+
+export const setResultsAction = async (data:Result) => {
+  const questions = await getQuestions(data.testId)
+  let rightCount = 0
+
+  const rightAnswers = {} as {[key:string]:string}
+  questions.forEach((question, index) => {
+    rightAnswers[question.id] = question.answers[0]
+  })
+
+  const resultAnswers = data.answers.map(answer => {
+    const isCorrect = rightAnswers[answer.questionId] === answer.answerId
+    if(isCorrect) rightCount++
+    return {
+      ...answer,
+      isCorrect
+    }
+  })
+
+  const res = await createResult({
+    testId: data.testId,
+    linkId: data.linkId,
+    studentId: data.studentId || undefined,
+    studentName: data.studentName,
+    answers: JSON.stringify(resultAnswers),
+    rightCount
+  })
   if(!res) {
     return {success:false, message:'Failed to save results'}
   }
@@ -196,9 +230,5 @@ export const getTestByLinkAction = async (link: string) => {
 
 export const getResultList = async (userId: string) => {
   const res = await getTestListWithResults(userId)
-  return res
-}
-export const getResultListByTestId = async (userId: string, testId:string) => {
-  const res = await getTestListWithResultsByTestId(userId, testId)
   return res
 }
