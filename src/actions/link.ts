@@ -15,7 +15,7 @@ type LinkType = {
   userId: string
   studentId?: string
   name?: string
-  path?: string
+  path: string
 }
 
 const generateLink = () => {
