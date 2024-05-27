@@ -42,7 +42,7 @@ export const LoginForm = () => {
     <Form {...form}>
       <div>
         <h1 className="text-2xl font-semibold mb-4">Login</h1>
-        <p className="text-sm mb-4">Don't have account yet? <Link className="text-blue-400" href={'/signup'}>SignUp</Link>
+        <p className="text-sm mb-4">Dont have account yet? <Link className="text-blue-400" href={'/signup'}>SignUp</Link>
         </p>
       </div>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
