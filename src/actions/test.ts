@@ -138,6 +138,13 @@ export const editQuestion = async (state: QuestionFormState, formData: FormData)
     }
   }
 
+  if(!newQuestion) {
+    return {
+      message: 'Error editing question',
+      success: false
+    }
+  }
+
   await createAnswers(newQuestion, answers)
   revalidatePath('/dashboard/test/[link]')
 
@@ -190,9 +197,9 @@ export const setResultsAction = async (data:Result) => {
   const questions = await getQuestions(data.testId)
   let rightCount = 0
 
-  const rightAnswers = {} as {[key:string]:string}
-  questions.forEach((question, index) => {
-    rightAnswers[question.id] = question.answers[0]
+  const rightAnswers = {} as Record<string, string>
+  questions.forEach(({id, answers}, index) => {
+    rightAnswers[id] = answers[0].id
   })
 
   const resultAnswers = data.answers.map(answer => {
