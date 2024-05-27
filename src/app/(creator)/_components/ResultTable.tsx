@@ -22,11 +22,12 @@ type ResultTableProps = {
 }
 
 type Results = {
+  id: string
   testName: string
   studentName: string
-  rightAnswers: number
-  totalQuestions: number
   date: string
+  timer: number
+  correct: string
 }
 
 export const ResultTable = ({data, columns}:ResultTableProps) => {

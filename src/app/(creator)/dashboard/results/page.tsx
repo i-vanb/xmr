@@ -52,16 +52,36 @@ export default async function Page() {
   )
 }
 
+type ProcessedResult = {
+  id: string
+  testName: string
+  studentName: string
+  date: string
+  timer: number
+  correct: string
+}[]
 
-const getProcessedResults = (list) => {
-  let processedList = []
+type ProcessedResultParams = {
+  title: string
+  timer: number
+  results: {
+    id: string
+    studentName: string | null
+    rightCount: number
+    answers: string
+    createdAt: Date
+  }[]
+}[]
+
+const getProcessedResults = (list:ProcessedResultParams):ProcessedResult => {
+  let processedList = [] as ProcessedResult
   list.forEach((item) => {
     const testName = item.title
     const timer = item.timer
     item.results.forEach((result) => {
       try {
         const answers = JSON.parse(result.answers)
-        const studentName = result.studentName
+        const studentName = result.studentName || ''
         const correct = result.rightCount + '/' + answers.length
         const date = new Date(result.createdAt).toLocaleDateString()
         processedList.push({id: result.id, testName, studentName, date, timer, correct})
