@@ -12,14 +12,15 @@ import {Input} from "@/components/ui/input";
 type LinkTest = {
   id: string
   testId: string
-  studentId: string
+  studentId: string | null
   path: string
   active: boolean
+  name: string | null
   student: {
     id: string
     name: string
-    email?: string
-  }
+    email: string | null
+  } | null
 }
 
 type LinkSheetProps = {
@@ -27,6 +28,7 @@ type LinkSheetProps = {
   students: {
     id: string
     name: string
+    email: string | null
   }[]
   testId: string
 }
@@ -113,7 +115,7 @@ export const LinkSheet = ({links, students, testId}:LinkSheetProps) => {
                               <Trash2 size={18}/>
                             </Button>
                             {link.studentId
-                              ? <span className="text-xs text-gray-400">Student: {link.student.name}</span>
+                              ? <span className="text-xs text-gray-400">Student: {link?.student?.name}</span>
                               : <span className="text-xs text-gray-400">Student: {link.name}</span>
                             }
                             {!link.active && <span title="Link has been already used, refresh link to use again" className="text-xs text-red-500">inactive</span>}

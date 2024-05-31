@@ -7,9 +7,7 @@ export const getStudents = async () => {
   const session = await getSession()
 
   if(!session?.user?.id) {
-    return {
-      message: 'Unauthorized'
-    }
+    return []
   }
 
   const res = await getListByUser(session.user.id)

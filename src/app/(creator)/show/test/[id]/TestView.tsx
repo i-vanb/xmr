@@ -12,6 +12,7 @@ export type Props = {
   students: {
     id: string
     name: string
+    email: string | null
   }[]
 }
 
@@ -27,15 +28,18 @@ export type Question = {
 export type LinkTest = {
   id: string
   testId: string
-  studentId: string
+  studentId: string | null
   path: string
   active: boolean
-  name?: string
+  name: string | null
   student: {
-    id: string
-    name: string
-    email?: string
-  }
+    id: string;
+    name: string;
+    email: string | null; // Adjust to match provided type
+    password?: string | null; // Allow additional properties
+    image?: string | null;
+    teacherId?: string;
+  } | null
 }
 
 export const TestView = ({test, students}: Props) => {

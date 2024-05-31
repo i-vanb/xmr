@@ -13,7 +13,22 @@ type Props = {
   test: {
     questions: Array<Question>
   } & EditTestProps
-  link?: LinkTest
+  link?: {
+    id: string
+    testId: string
+    studentId: string | null
+    path: string
+    active: boolean
+    name: string | null
+    student: {
+      id: string;
+      name: string | null;
+      email: string | null; // Adjust to match provided type
+      password?: string | null; // Allow additional properties
+      image?: string | null;
+      teacherId?: string;
+    } | null
+  }
   mode?: 'demo' | 'test'
 }
 
@@ -119,8 +134,8 @@ export const TestProcess = ({test, link, mode = 'test'}: Props) => {
           answerId: answer
         })
       }),
-      studentId: link?.student.id || '',
-      studentName: link?.student.name || ''
+      studentId: link?.student?.id || '',
+      studentName: link?.student?.name || ''
     })
 
     if(!res.success) {

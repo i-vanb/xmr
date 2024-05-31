@@ -12,6 +12,7 @@ type Params = {
   }
 }
 
+// @ts-ignore
 export const DELETE = auth(async function DELETE(request, {params}:Params ) {
   const {id} = params
 

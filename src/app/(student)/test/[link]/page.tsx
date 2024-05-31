@@ -20,7 +20,8 @@ export default async function page({params: params}: { params: { link: string } 
     active: res.active,
     student: {
       id:'',
-      name: res.name
+      name: res.name,
+      email: ''
     }
   }
 
